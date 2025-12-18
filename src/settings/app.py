@@ -10,7 +10,7 @@ class AppSettings(BaseSettings):
     name: str = "Anomer"
     """ Название приложения """
 
-    app_version: str = "0.0.1"
+    version: str = "0.0.1"
     """ Версия приложения """
 
     prefix: str = "/api"
