@@ -64,7 +64,8 @@ def analyze_class_properties_with_ast(file_path, class_name: str) -> ClassInfo:
                 if isinstance(body_node, ast.AnnAssign):
                     # target.id - это имя свойства (e.g., 'user', 'port')
                     prop_name = body_node.target.id
-                    
+                    prop_value = body_node.value.value if isinstance(body_node.value, ast.Constant) else None
+
                     # annotation - это выражение типа (e.g., ast.Subscript для str | None)
                     # Преобразовать это обратно в строку типа сложно, но можно извлечь
                     prop_type_node = body_node.annotation
@@ -73,7 +74,8 @@ def analyze_class_properties_with_ast(file_path, class_name: str) -> ClassInfo:
                     
                     class_info.properties[prop_name] = {
                         'type_str': prop_type_str,
-                        'docstring': attr_docs.get(prop_name, "N/A")
+                        'docstring': attr_docs.get(prop_name, "N/A"),
+                        'value': prop_value
                     }
 
     return class_info
@@ -112,37 +114,51 @@ def main():
     env_lines: list[str] = []
 
     for key, value in data.items():
+        # заменяем точки на слеш и добавляем расширение в конец пути
         file_path = key.replace(".", "/") + ".py"
+        # анализируем файл 
         info = analyze_class_properties_with_ast(file_path, value)
 
         header = f"# ---+ {info.classname} +---"
-        doc = info.doc
-        header_end = "-" * (len(header) - 2)
+        doc = f"# {info.doc}"
+        header_end = f"# {"-" * (len(header) - 2)}"
 
         env_lines.append(f"{header}\n")
-        env_lines.append(f"# {doc}" + "\n")
-        env_lines.append(f"# {header_end}\n")
+        env_lines.append(f"{doc}" + "\n")
+        env_lines.append(f"{header_end}\n")
 
         for name, details in info.properties.items():
-            value = None
+            fake_value = None
+            actual_value = details['value']
             param_type = details['type_str']
             indent = "\t"
             
             if param_type == 'bool' or param_type == 'bool | None':
-                value = '"false"'
+                fake_value = '"false"'
             if param_type == 'int' or param_type == 'int | None':
-                value = "0"
+                fake_value = "0"
             if param_type == 'str' or param_type == 'str | None':
-                value = '"N/A"'
+                fake_value = '"<какая-то строка>"'
+            if param_type == 'Path' or param_type == 'Path | None':
+                fake_value = '"<путь>"'
 
-            if value:
-                env_lines.append(f"{indent}# {details['docstring']}" + "\n")
-                env_lines.append(f"{indent}{name} = {value}" + "\n")
+            if fake_value:
+                comment_line = f"{indent}# {details['docstring']}."
+                if actual_value:
+                    comment_line += f" По умолчанию: '{actual_value}'"
+                comment_line += f"\n{indent}# [{param_type}]"
+
+                param_name = f"{info.env_prefix.upper()}{name.upper()}"
+
+                env_lines.append(comment_line + "\n")
+                env_lines.append(f"{indent}{param_name} = {fake_value}" + "\n")
+
         env_lines.append("\n")
             
-    with open("env_example", 'w' ,encoding='utf-8') as f:
+    with open(".env.example", 'w' ,encoding='utf-8') as f:
         f.writelines(env_lines)
 
+    print("✅ файл .env.example создан")
 
 if __name__ == '__main__':
     main()
