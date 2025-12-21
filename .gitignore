@@ -115,6 +115,9 @@ redis.conf
 
 # docker compose
 docker-compose.yml
+compose.yml
+docker-compose.yaml
+compose.yaml
 
 # Zed IDE
 .ropeproject/
