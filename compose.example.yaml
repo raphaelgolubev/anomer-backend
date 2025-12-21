@@ -24,7 +24,7 @@ services:
     networks:
       - local_network
     ports:
-      - "*{DB_PORT}:*{DB_PORT}"
+      - "*{DB__PORT}:*{DB__PORT}"
     volumes:
       - db_volume:/var/lib/postgresql/data
     healthcheck:
@@ -45,7 +45,7 @@ services:
   #   networks:
   #     - local_network
   #   ports:
-  #     - "*{REDIS_PORT}:*{REDIS_PORT}"
+  #     - "*{REDIS__PORT}:*{REDIS__PORT}"
   #   volumes:
   #     - redis_volume:/data
   #     - ./redis.conf:/usr/local/etc/redis/redis.conf
