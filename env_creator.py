@@ -1,3 +1,10 @@
+"""
+Скрипт ищет директорию 'settings' в проекте и находит в ней
+файл '__init__.py', затем достает импорты в этом файле и 
+таким образом получает пути к файлам, которые содержат класс BaseSettings.
+На основе содержания этих классов создается '.env.example'
+"""
+
 import ast
 from dataclasses import dataclass
 from pathlib import Path
@@ -11,7 +18,7 @@ class ClassInfo:
     properties: dict[str, str]
 
 
-def analyze_class_properties_with_ast(file_path, class_name: str) -> ClassInfo:
+def analyze_class_properties_with_ast(file_path: str, class_name: str) -> ClassInfo:
     """
     Анализирует указанный класс в файле с помощью AST
     и возвращает словарь свойств, типов и docstrings.
@@ -115,7 +122,7 @@ def main():
 
     for key, value in data.items():
         # заменяем точки на слеш и добавляем расширение в конец пути
-        file_path = key.replace(".", "/") + ".py"
+        file_path: str = key.replace(".", "/") + ".py"
         # анализируем файл 
         info = analyze_class_properties_with_ast(file_path, value)
 
