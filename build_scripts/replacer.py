@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
-# Скрипт заменяет вхождения *{VAR} в файле значениями из .env
-# Поддерживает кавычки, пробелы и простые комментарии в .env
+"""
+Скрипт заменяет вхождения *{VAR} в файле значениями из .env
+Поддерживает кавычки, пробелы и простые комментарии в .env
+
+Использование:
+uv run build_scripts/replacer.py .env compose.example.yaml -o compose.yaml
+"""
 
 import re
 import sys
