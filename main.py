@@ -1,35 +1,18 @@
-# interfaceingame.com
-# CRT effect CSS / CRT scanline
-# gameuidatabase.com
+import uvicorn
 
-from src.settings import settings
+from src.settings import settings, test
 
 
 def main():
-    app = settings.app.model_dump()
-    db = settings.db.model_dump()
-    mail = settings.mail.model_dump()
-    security = settings.security.model_dump()
-    redis = settings.redis.model_dump()
-    server = settings.server.model_dump()
-    
-    print("=== App")
-    print(app)
+    test()
 
-    print("=== Database")
-    print(db)
-
-    print("=== Mail")
-    print(mail)
-
-    print("=== Security")
-    print(security)
-
-    print("=== Redis")
-    print(redis)
-
-    print("=== Server")
-    print(server)
+    uvicorn.run(
+        app="src.app:app",
+        host=settings.server.host, # type: ignore
+        port=settings.server.port, # type: ignore
+        lifespan="on",
+        reload=True,
+    )
 
 
 if __name__ == "__main__":
