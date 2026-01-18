@@ -24,16 +24,23 @@ class DatabaseSettings(BaseSettings):
     """ Имя хоста сервера СУБД """
 
     @property
-    def async_dsn(self):
+    def pg_async_dsn(self):
         """
         Строка подключения к PostgreSQL с использованием AsyncPG.
         """
         return f"postgresql+asyncpg://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}"
+    
+    @property
+    def mongo_async_dsn(self):
+        """
+        Строка подключения к MongoDB
+        """
+        return f""
 
-    echo: bool = False
-    echo_pool: bool = False
-    pool_size: int = 50
-    max_overflow: int = 10
+    pg_echo: bool = False
+    pg_echo_pool: bool = False
+    pg_pool_size: int = 50
+    pg_max_overflow: int = 10
 
     # env ignore
     naming_conventions: dict[str, str] = {
