@@ -21,7 +21,7 @@ class ModelConfig:
             case_sensitive=False,
             env_ignore_empty=True,
             env_file_encoding="utf-8",
-            env_file=".env",
+            env_file="configs/.env",
         )
         config.update(**kwargs) # type: ignore
         return config
