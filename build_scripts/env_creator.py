@@ -6,6 +6,7 @@
 """
 
 import ast
+import argparse
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -115,7 +116,7 @@ def get_path_and_classname() -> dict[str, str]:
     return {}
 
 
-def main():
+def make(output_path: Path):
     data = get_path_and_classname()
 
     env_lines: list[str] = []
@@ -162,10 +163,26 @@ def main():
 
         env_lines.append("\n")
             
-    with open(".env.example", 'w' ,encoding='utf-8') as f:
+    with open(output_path, 'w' ,encoding='utf-8') as f:
         f.writelines(env_lines)
 
     print("✅ файл .env.example создан")
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Создает файл .env.example"
+    )
+    parser.add_argument(
+        "-o", "--output", type=Path, help="путь для сохранения результата"
+    )
+    args = parser.parse_args()
+
+    if args.output:
+        make(args.output)
+    else:
+        make(Path(".env.example"))
+
 
 if __name__ == '__main__':
     main()
