@@ -119,5 +119,7 @@ compose.yml
 docker-compose.yaml
 compose.yaml
 
+mongo-init.js
+
 # Zed IDE
 .ropeproject/
