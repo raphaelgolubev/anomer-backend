@@ -12,5 +12,6 @@ dependencies = [
     "orjson>=3.11.5",
     "pydantic-settings>=2.11.0",
     "pyjwt[crypto]>=2.10.1",
+    "pymongo>=4.16.0",
     "uvicorn>=0.38.0",
 ]
