@@ -16,8 +16,8 @@ from pathlib import Path
 # Разбор .env файла: поддерживаются строки вида
 # KEY=VALUE, KEY="value", KEY='value'
 # Игнорируются пустые строки и строки, начинающиеся с #
-def parse_env(path: Path):
-    env = {}
+def parse_env(path: Path) -> dict[str, str]:
+    env: dict[str, str] = {}
     line_re = re.compile(r"^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$")
     if not path.exists():
         raise FileNotFoundError(f".env файл не найден: {path}")
@@ -52,11 +52,11 @@ def parse_env(path: Path):
 
 # Замена шаблонов вида *{VAR} на значение из env
 # Поддерживается только точное совпадение символа '*' перед '{'
-def replace_placeholders(text: str, env: dict):
+def replace_placeholders(text: str, env: dict[str, str]):
     # Паттерн ищет '*' непосредственно перед '{' и захватывает имя переменной
     pattern = re.compile(r"\*\{([A-Za-z_][A-Za-z0-9_]*)\}")
 
-    def repl(m):
+    def repl(m: re.Match[str]):
         name = m.group(1)
         # Если переменная найдена в env — вернуть её значение, иначе вернуть исходный текст (оставляем "*{VAR}")
         return env.get(name, m.group(0))
