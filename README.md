@@ -124,3 +124,50 @@ class MailSettings(BaseSettings):
 
 Обратите внимание, что свойство `test_feature_flag` не попало в конечный файл, потому что перед ним указан комментарий `env-example-ignore`, который заставляет игнорировать свойство при анализе класса.
 
+
+### replacer.py
+
+Позволяет вставлять значения переменных из `.env` файла в необходимом файле.
+Просто укажите название переменной в формате`*{ПЕРЕМЕННАЯ}` и запустите скрипт.
+Например:
+
+файл `.env`:
+```shell
+APP__NAME="Anomer"
+REDIS__HOST="localhost"
+REDIS__PORT=3000
+```
+
+файл `redis.conf`:
+```shell
+# Redis конфигурация для *{APP__NAME}
+
+# Основные настройки
+bind *{REDIS__HOST}
+port *{REDIS__PORT}
+timeout 0
+tcp-keepalive 300
+```
+
+Запуск скрипта:
+```shell
+uv run replacer.py configs/.env data/redis.conf -o result/redis_test.conf
+```
+
+- `uv run replacer.py` - запуск скрипта в контексте `uv`.
+- `configs/.env` - путь до `.env` файла.
+- `data/redis.conf` - файл, который нужно обработать.
+- `result/redis_test.conf` - место, куда нужно сохранить результат
+
+Таким образом, конечный файл `redis_test.conf` будет иметь следующее содержимое:
+```shell
+# Redis конфигурация для Anomer <---- [значение APP__NAME]
+
+# Основные настройки
+bind localhost    <---- [значение REDIS__HOST]
+port 3000         <---- [значение REDIS__PORT]
+timeout 0
+tcp-keepalive 300
+```
+
+Это очень простой, но также очень полезный скрипт, который я использую в `Makefile` для генерации различных файлов. В частности для таргета `make configs`.
