@@ -5,6 +5,7 @@
 
 Использование:
 uv run build_scripts/replacer.py .env compose.example.yaml -o compose.yaml
+uv run <путь до скрипта> <путь до .env> <путь до обрабатываемого файла> -o <куда сохранить результат>
 """
 
 import re
