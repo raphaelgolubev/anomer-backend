@@ -35,7 +35,7 @@ class DatabaseSettings(BaseSettings):
         """
         Строка подключения к MongoDB
         """
-        return f""
+        return f"mongodb://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}?authSource=admin"
 
     pg_echo: bool = False
     pg_echo_pool: bool = False
