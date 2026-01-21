@@ -18,6 +18,9 @@ else
 	endif
 endif
 
+# если юзер просто написал make, то вызвать таргет help
+.DEFAULT_GOAL := help
+
 ENV_FILE := ./configs/.env
 COMPOSE_FILE := ./configs/compose.yaml
 REPLACER_FILE := ./build_scripts/replacer.py
@@ -28,12 +31,19 @@ CREATE_ENV_EXAMPLE := uv run ${ENV_CREATE_FILE}
 
 COMPOSE := docker-compose -f $(COMPOSE_FILE)
 
+# ============
+# === HELP ===
+# ============
+help: ## Отобразить это справочное сообщение
+	@echo "Доступные команды:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
+
 # ===============
 # === INSTALL ===
 # ===============
 .PHONY: install env-copy
 
-install:
+install: ## первичная установка и настройка проекта
 # создаем папку certs
 	@mkdir -p certs
 	@echo "✅ Папка certs создана"
@@ -56,8 +66,7 @@ install:
 	@echo "👉 заполните файл .env своими значениями"
 	@echo "👉 выполните make sync"
 
-
-env-copy:
+env-copy: ## копируем .env.example в .env
 	@if [ -f configs/.env ]; then \
 		echo "⚠️  Внимание: файл .env уже существует, пропускаю копирование."; \
 	else \
@@ -69,8 +78,7 @@ env-copy:
 # ==============
 .PHONY: start
 
-# запускаем локальный сервер
-start:
+start: ## запускаем локальный сервер
 	uv run main.py
 
 # ==============
@@ -78,69 +86,49 @@ start:
 # ==============
 .PHONY: build up upb logs clean full-clean
 
-# собираем контейнеры
-build:
+build: ## собираем контейнеры
 	$(COMPOSE) build
 
-# поднимаем контейнеры
-up:
+up: ## поднимаем контейнеры
 	${COMPOSE} up
 
-# пересобираем и поднимаем контейнеры
-upb:
+upb: ## пересобираем и поднимаем контейнеры
 	${COMPOSE} up --build
 
-# выводим логи за последние 10 минут
-logs:
+logs: ## выводим логи docker за последние 10 минут
 	${COMPOSE} logs --since=10m
 
-# удаляем контейнеры и их вольюмы 
-clean:
+clean: ## удаляем контейнеры и их вольюмы 
 	$(COMPOSE) down -v --remove-orphans
 
-# удаляем все подчистую
-full-clean:
+full-clean: ## удаляем все подчистую
 	docker system prune -a
-
 
 # ==============
 # === UTILS ===
 # ==============
-.PHONY: echo env-example sync-compose sync-mongo-js sync
+.PHONY: echo env-example cfg-compose cfg-mongo-js configs
 
-echo:
-	@echo "🟦 UNAME_S 				= ${UNAME_S}"
-	@echo "🟦 ENV_FILE 				= ${ENV_FILE}"
-	@echo "🟦 COMPOSE_FILE 			= ${COMPOSE_FILE}"
-	@echo "🟦 REPLACER_FILE			= ${REPLACER_FILE}"
-	@echo "🟦 ENV_CREATE_FILE		= ${ENV_CREATE_FILE}"
-	@echo "🟦 REPLACE				= ${REPLACE}"
-	@echo "🟦 CREATE_ENV_EXAMPLE	= ${CREATE_ENV_EXAMPLE}"
-	@echo "🟦 COMPOSE				= ${COMPOSE}"
+echo: ## Показать все переменные
+	@$(foreach v, $(.VARIABLES), $(if $(filter file,$(origin $(v))), echo "🟦 $(v) = $($(v))";))
 
-# создаем файл .env.example на основе классов BaseSettings
-env-example:
+env-example: ## создаем файл .env.example на основе классов BaseSettings
 	${CREATE_ENV_EXAMPLE} -o configs/.env.example
 
-# создаем файл compose.yaml подставляя переменные из .env
-sync-compose:
+cfg-compose: ## создаем файл compose.yaml подставляя переменные из .env
 	${REPLACE} ${ENV_FILE} configs/compose.example.yaml -o configs/compose.yaml 
 
-# создаем файл mongo-init.js подставляя переменные из .env
-sync-mongo-js:
+cfg-mongo-js: ## создаем файл mongo-init.js подставляя переменные из .env
 	${REPLACE} ${ENV_FILE} configs/mongo-init.example.js -o configs/mongo-init.js
 
-# синхронизируем все
-sync: sync-compose sync-mongo-js
-
+configs: cfg-compose cfg-mongo-js ## создаем/обновляем конфиги
 
 # ================
 # === SECURITY ===
 # ================
 .PHONY: secret-key public-key keys
 
-# генерация приватного ключа
-secret-key:
+secret-key: ## генерация приватного ключа
 ifeq ($(UNAME_S),Windows)
 	@echo "🥀 для винды ниче еще не готово"
 	@echo "❌ ПРИВАТНЫЙ КЛЮЧ НЕ СГЕНЕРИРОВАН"
@@ -149,7 +137,7 @@ else
 	@openssl genrsa -out certs/jwt-private.pem 2048
 endif
 
-public-key:
+public-key: ## генерация публичного ключа
 ifeq ($(UNAME_S),Windows)
 	@echo "🥀 для винды ниче еще не готово"
 	@echo "❌ ПУБЛИЧНЫЙ КЛЮЧ НЕ СГЕНЕРИРОВАН"
@@ -158,5 +146,4 @@ else
 	@openssl rsa -in certs/jwt-private.pem -outform PEM -pubout -out certs/jwt-public.pem
 endif
 
-# можно просто вызвать "keys"
-keys: secret-key public-key
+keys: secret-key public-key ## генерируем приватный и публичный ключи
