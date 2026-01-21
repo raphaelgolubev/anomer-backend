@@ -6,14 +6,14 @@ from fastapi.responses import ORJSONResponse
 from pymongo.errors import ConnectionFailure
 
 from src.settings import settings
-from src.database import mongo
+from src.database import database
 
 
 async def startup():
     """Выполняется при запуске приложения"""
     try:
         # Пытаемся пингануть базу при старте
-        await mongo.admin.command('ping')
+        await database.command('ping')
         print("✅ Successfully connected to MongoDB")
     except ConnectionFailure:
         print("❌ MongoDB connection failed during startup")
@@ -45,7 +45,7 @@ async def health_check():
     """Эндпоинт для мониторинга"""
     try:
         # Асинхронный ping — самый легкий способ проверки
-        await mongo.admin.command('ping')
+        await database.command('ping')
         return {"status": "ok", "db": "mongodb_connected"}
     except Exception as e:
         # Возвращаем 503, если БД недоступна
