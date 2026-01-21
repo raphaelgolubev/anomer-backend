@@ -25,7 +25,9 @@ def analyze_class_properties_with_ast(file_path: str, class_name: str) -> ClassI
     и возвращает словарь свойств, типов и docstrings.
     """
     with open(file_path, 'r', encoding='utf-8') as f:
-        source_code = f.read()
+        lines = f.readlines()
+        
+    source_code = "".join(lines)
 
     # Парсим исходный код в AST-дерево
     tree = ast.parse(source_code)
@@ -63,13 +65,19 @@ def analyze_class_properties_with_ast(file_path: str, class_name: str) -> ClassI
 
                     # Ищем предыдущий узел, который был аннотацией
                     if i > 0 and isinstance(node.body[i-1], ast.AnnAssign):
-                        prev_assign_node = node.body[i-1]
-                        attr_name = prev_assign_node.target.id
+                        attr_name = node.body[i-1].target.id
                         attr_docs[attr_name] = doc_string_value
 
             # Теперь извлекаем сами аннотации (имя и тип)
             for body_node in node.body:
                 if isinstance(body_node, ast.AnnAssign):
+                    comment_idx: int = body_node.lineno - 2
+                    comment = lines[comment_idx].strip()
+
+                    if "env-example-ignore" in comment:
+                        print(f"IGNORE LINE: {lines[comment_idx + 1]}")
+                        continue
+
                     # target.id - это имя свойства (e.g., 'user', 'port')
                     prop_name = body_node.target.id
                     prop_value = body_node.value.value if isinstance(body_node.value, ast.Constant) else None
