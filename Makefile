@@ -107,7 +107,7 @@ full-clean: ## удаляем все подчистую
 # ==============
 # === UTILS ===
 # ==============
-.PHONY: echo env-example cfg-compose cfg-mongo-js configs
+.PHONY: echo env-example cfg-compose cfg-mongo-js cfg-redis configs
 
 echo: ## Показать все переменные
 	@$(foreach v, $(.VARIABLES), $(if $(filter file,$(origin $(v))), echo "🟦 $(v) = $($(v))";))
@@ -121,7 +121,10 @@ cfg-compose: ## создаем файл compose.yaml подставляя пер
 cfg-mongo-js: ## создаем файл mongo-init.js подставляя переменные из .env
 	${REPLACE} ${ENV_FILE} configs/mongo-init.example.js -o configs/mongo-init.js
 
-configs: cfg-compose cfg-mongo-js ## создаем/обновляем конфиги
+cfg-redis: ## создаем файл redis.conf подставляя переменные из .env
+	${REPLACE} ${ENV_FILE} configs/redis.conf.example -o configs/redis.conf
+
+configs: cfg-compose cfg-mongo-js cfg-redis ## создаем/обновляем конфиги
 
 # ================
 # === SECURITY ===
