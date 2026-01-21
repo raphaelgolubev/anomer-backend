@@ -11,6 +11,14 @@
             "program": "${workspaceFolder}/build_scripts/replacer.py",
             "console": "integratedTerminal",
             "args": "${command:pickArgs}"
+        },
+        {
+            "name": "Python: env_creator.py script",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/build_scripts/env_creator.py",
+            "console": "integratedTerminal",
+            "args": "${command:pickArgs}"
         }
     ]
 }
