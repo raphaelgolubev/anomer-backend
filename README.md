@@ -36,7 +36,7 @@ Frontend - https://github.com/raphaelgolubev/anomer-web
 make install
 ```
 
->ОБЯЗАТЕЛЬНО: Заполните параметры в файле `.env`
+>ОБЯЗАТЕЛЬНО: Перед следующим шагом заполните параметры в файле `.env`
 
 После чего выполните:
 ```shell
