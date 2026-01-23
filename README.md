@@ -65,7 +65,7 @@ make start
 
 
 ### Utils
-- `make configs` - создаст или перезапишет служебные файлы (compose.yaml, redis.conf и тд)
+- `make configs` - создаст или перезапишет служебные файлы (compose.yaml, redis.conf и тд). Рекомендую вызывать команду после каждого изменения значений в `.env` файле.
 - `make env-example` - создаст или перезапишет файл .env.example
 
 ### Security
