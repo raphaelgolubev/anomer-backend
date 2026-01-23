@@ -29,7 +29,7 @@ services:
     ports:
       - "*{DB__PORT}:*{DB__PORT}"
     volumes:
-      - ./configs/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
       - mongo_data:/data/db 
 
   redis:
@@ -42,7 +42,7 @@ services:
       - "*{REDIS__PORT}:*{REDIS__PORT}"
     volumes:
       - redis_volume:/data
-      - ./configs/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
     command: redis-server /usr/local/etc/redis/redis.conf
     healthcheck:
       test: ["CMD", "redis-cli", "-a", "${REDIS__PASSWORD}", "ping"]
