@@ -159,9 +159,16 @@ def make(output_path: Path):
                 fake_value = '"<путь>"'
 
             if fake_value:
-                comment_line = f"{indent}# {details['docstring']}."
+                doc_str = details['docstring']
+                comment_line = ""
+                if "\n" in doc_str:
+                    lines = [f"{indent}# {line.strip()}" for line in doc_str.split("\n")]
+                    comment_line = "\n".join(lines)
+                else:
+                    comment_line = f"{indent}# {details['docstring']}."
+                
                 if actual_value:
-                    comment_line += f" По умолчанию: '{actual_value}'"
+                    comment_line += f"\n{indent}# По умолчанию: '{actual_value}'"
                 comment_line += f"\n{indent}# [{param_type}]"
 
                 param_name = f"{info.env_prefix.upper()}{name.upper()}"
