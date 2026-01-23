@@ -6,7 +6,7 @@ from fastapi.responses import ORJSONResponse
 from pymongo.errors import ConnectionFailure
 
 from src.settings import settings
-from src.database import database
+from src.database import database, create_beanie
 
 
 async def startup():
@@ -17,6 +17,9 @@ async def startup():
         print("✅ Successfully connected to MongoDB")
     except ConnectionFailure:
         print("❌ MongoDB connection failed during startup")
+    else:
+        await create_beanie()
+        print("✅ Beanie initialized")
 
 
 async def shutdown():
