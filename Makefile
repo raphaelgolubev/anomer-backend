@@ -84,7 +84,7 @@ start: ## запускаем локальный сервер
 # ==============
 # === DOCKER ===
 # ==============
-.PHONY: build up upb logs clean full-clean
+.PHONY: build up upb down logs clean full-clean
 
 build: ## собираем контейнеры
 	$(COMPOSE) build
@@ -94,6 +94,9 @@ up: ## поднимаем контейнеры
 
 upb: ## пересобираем и поднимаем контейнеры
 	${COMPOSE} up --build
+
+down: ## останавливаем контейнеры
+	$(COMPOSE) down
 
 logs: ## выводим логи docker за последние 10 минут
 	${COMPOSE} logs --since=10m
