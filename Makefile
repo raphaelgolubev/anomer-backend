@@ -24,7 +24,7 @@ endif
 ENV_FILE := ./configs/.env
 COMPOSE_FILE := ./configs/compose.yaml
 REPLACER_FILE := ./build_scripts/replacer.py
-ENV_CREATE_FILE := ./build_scripts/env_creator.py
+ENV_CREATE_FILE := ./build_scripts/envex_creator.py
 
 REPLACE := uv run ${REPLACER_FILE}
 CREATE_ENV_EXAMPLE := uv run ${ENV_CREATE_FILE}

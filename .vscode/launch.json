@@ -13,10 +13,10 @@
             "args": "${command:pickArgs}"
         },
         {
-            "name": "Python: env_creator.py script",
+            "name": "Python: envex_creator.py script",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/build_scripts/env_creator.py",
+            "program": "${workspaceFolder}/build_scripts/envex_creator.py",
             "console": "integratedTerminal",
             "args": "${command:pickArgs}"
         }

@@ -82,7 +82,7 @@ make help
 
 ## Скрипты из папки build_scripts
 
-### env_creator.py
+### envex_creator.py
 
 Этот скрипт выполняет анализ всех `BaseSettings` классов и создает файл `.env.example` на основе их содержимого. Например:
 
