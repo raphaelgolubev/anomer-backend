@@ -12,6 +12,7 @@ dependencies = [
     "fastapi>=0.124.4",
     "orjson>=3.11.5",
     "pydantic-settings>=2.11.0",
+    "pydantic[email]>=2.12.5",
     "pyjwt[crypto]>=2.10.1",
     "pymongo>=4.16.0",
     "uvicorn>=0.38.0",
