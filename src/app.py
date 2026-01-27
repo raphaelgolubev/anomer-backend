@@ -5,21 +5,44 @@ from fastapi.responses import ORJSONResponse
 
 from pymongo.errors import ConnectionFailure
 
+from loguru import logger
+
 from src.settings import settings
 from src.database import database, create_beanie
+from src.logger import setup_logging
 
 
 async def startup():
     """Выполняется при запуске приложения"""
+
+    setup_logging()
+
     try:
         # Пытаемся пингануть базу при старте
         await database.command('ping')
-        print("✅ Successfully connected to MongoDB")
+        logger.success("✅ Successfully connected to MongoDB")
     except ConnectionFailure:
-        print("❌ MongoDB connection failed during startup")
+        logger.exception("❌ MongoDB connection failed during startup")
     else:
         await create_beanie()
-        print("✅ Beanie initialized")
+        logger.success("✅ Beanie initialized")
+
+        async def test_db():
+            from src.database.models import User
+
+            users: list[User] = []
+            for i in range(5):
+                name = f"test_user_{i}"
+                usr = User(
+                    name=name,
+                    email=f"test_{i}@test.com",
+                    password="<hash>"
+                )
+                users.append(usr)
+                logger.debug(f"added user {name}")
+            
+            await User.insert_many(users)
+        await test_db()
 
 
 async def shutdown():
