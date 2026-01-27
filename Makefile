@@ -24,7 +24,7 @@ endif
 ENV_FILE := ./configs/.env
 COMPOSE_FILE := ./configs/compose.yaml
 REPLACER_FILE := ./build_scripts/replacer.py
-ENV_CREATE_FILE := ./build_scripts/envex_creator.py
+ENV_CREATE_FILE := ./build_scripts/envex.py
 
 REPLACE := uv run ${REPLACER_FILE}
 CREATE_ENV_EXAMPLE := uv run ${ENV_CREATE_FILE}
@@ -127,7 +127,7 @@ cfg-mongo-js: ## создаем файл mongo-init.js подставляя пе
 cfg-redis: ## создаем файл redis.conf подставляя переменные из .env
 	${REPLACE} ${ENV_FILE} configs/redis.conf.example -o configs/redis.conf
 
-configs: cfg-compose cfg-mongo-js cfg-redis ## создаем/обновляем конфиги
+configs: env-example cfg-compose cfg-mongo-js cfg-redis ## создаем/обновляем конфиги
 
 # ================
 # === SECURITY ===
