@@ -16,6 +16,13 @@ class AppSettings(BaseSettings):
     prefix: str = "/api"
     """ Префикс пути """
 
+    mode: str = "dev"
+    """ 
+    Текущий режим:
+     - dev - локальная разработка
+     - prod - задеплоено на проде
+    """
+
     v1: ApiV1Config = ApiV1Config()
     """ Конфигурация первой версии API """
 
