@@ -10,6 +10,7 @@ dependencies = [
     "beanie>=2.0.1",
     "databases>=0.9.0",
     "fastapi>=0.124.4",
+    "loguru>=0.7.3",
     "orjson>=3.11.5",
     "pydantic-settings>=2.11.0",
     "pydantic[email]>=2.12.5",
