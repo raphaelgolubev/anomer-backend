@@ -43,7 +43,7 @@ class DatabaseSettings(BaseSettings):
     pg_max_overflow: int = 10
 
     # env ignore
-    naming_conventions: dict[str, str] = {
+    pg_naming_conventions: dict[str, str] = {
         "ix": "ix_%(column_0_label)s",
         "uq": "uq_%(table_name)s_%(column_0_name)s",
         "ck": "ck_%(table_name)s_%(constraint_name)s",
