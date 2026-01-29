@@ -9,6 +9,11 @@
         font-family: 'Courier New', monospace;
         color: #90fba4;
       }
+
+      .subcolor {
+        color: #90fba4b0;
+      }
+
       .container {
         max-width: 400px;
         margin: 40px auto;
@@ -21,6 +26,7 @@
       }
       .header-row {
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         margin-bottom: 20px;
@@ -39,7 +45,7 @@
         letter-spacing: 0.04em;
         text-align: left;
         line-height: 1.1;
-        background: linear-gradient(90deg, #90fba4, #0b731e);
+        background: #90fba4;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -47,7 +53,7 @@
       }
       .code-box {
         display: inline-block;
-        margin: 24px 0 16px 0;
+        margin: 0px 0 16px 0;
         padding: 18px 36px;
         font-size: 2.2em;
         font-weight: bold;
@@ -72,17 +78,12 @@
   <body>
     <div class="container">
       <div class="header-row">
-        <!-- <img src="cid:logo.jpg" alt="Logo" class="logo" /> -->
         {{ logo_svg|safe }}
         <span class="app-title">{{ app_name }}</span>
-        <!-- <span class="app-title">ANOM INC.</span> -->
       </div>
-      <h2>Ваш код подтверждения</h2>
-      <div class="subtitle">----------</div>
+      <h2 class="subcolor">Ваш код подтверждения</h2>
       <div class="code-box">{{ code }}</div>
-      <!-- <div class="code-box">123456</div> -->
-
-      <div>
+      <div class="subcolor">
         Введите этот 6-значный код в терминале для подтверждения
         адреса электронной почты.
       </div>
