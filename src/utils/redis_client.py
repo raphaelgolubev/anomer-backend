@@ -58,5 +58,27 @@ class RedisClient:
             print(f"Redis error: {e}")
             return None
 
+    async def delete_verification_code(self, email: str) -> bool:
+        """
+        Удаляет код верификации для email
+
+        Args:
+            email: Email пользователя
+
+        Returns:
+            bool: True если код успешно удален
+        """
+        try:
+            key = f"verification_code:{email}"
+            result = await self.redis.delete(key)
+            return result > 0
+        except Exception as e:
+            print(f"Redis error: {e}")
+            return False
+
+    async def close(self):
+        """Закрывает соединение с Redis"""
+        await self.redis.close()
+
 
 redis_client = RedisClient()
