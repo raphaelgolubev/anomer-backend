@@ -60,11 +60,9 @@ app.include_router(main_router)
 async def health_check():
     """Эндпоинт для мониторинга"""
     try:
-        # Асинхронный ping — самый легкий способ проверки
         await database.command('ping')
         return {"status": "ok", "db": "mongodb_connected"}
     except Exception as e:
-        # Возвращаем 503, если БД недоступна
         raise HTTPException(
             status_code=503, 
             detail=f"Database unavailable: {str(e)}"

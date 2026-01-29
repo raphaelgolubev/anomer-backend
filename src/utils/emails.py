@@ -65,7 +65,7 @@ async def send_verification_code(to_email: str, code: str) -> bool:
 
     # Формируем письмо с HTML, plain text и embedded image
     message = MIMEMultipart("related")
-    message["From"] = settings.mail.sender
+    message["From"] = "ANOM INC. SYSTEM MESSAGE"
     message["To"] = to_email
     message["Subject"] = f"Ваш код подтверждения {settings.app.name}"
 
