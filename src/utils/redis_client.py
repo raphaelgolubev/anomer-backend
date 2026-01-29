@@ -40,5 +40,23 @@ class RedisClient:
             print(f"Redis error: {e}")
             return False
 
+    async def get_verification_code(self, email: str) -> str | None:
+        """
+        Получает код верификации для email
+
+        Args:
+            email: Email пользователя
+
+        Returns:
+            str | None: Код верификации или None если не найден/истек
+        """
+        try:
+            key = f"verification_code:{email}"
+            code = await self.redis.get(key)
+            return code
+        except Exception as e:
+            print(f"Redis error: {e}")
+            return None
+
 
 redis_client = RedisClient()
