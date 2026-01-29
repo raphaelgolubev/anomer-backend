@@ -1,9 +1,11 @@
+import os, signal
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import ORJSONResponse
 
 from pymongo.errors import ConnectionFailure
+from redis.exceptions import ConnectionError
 
 from loguru import logger
 
@@ -11,40 +13,49 @@ from src.settings import settings
 from src.database import mongo, database, create_beanie
 from src.logger import setup_logging
 from src.api import main_router
-from src.utils.test_funcs import test_mongo, test_redis
+from src.utils.redis_client import redis_client
 
 async def startup():
     """Выполняется при запуске приложения"""
 
     setup_logging()
 
+    # Пытаемся пингануть монгу и редис при старте
     try:
-        # Пытаемся пингануть базу при старте
         await database.command('ping')
-        logger.success("Successfully connected to MongoDB")
-    except ConnectionFailure:
-        logger.exception("MongoDB connection failed during startup")
+        logger.success("Успешно подключился к MongoDB")
+
+        await redis_client.redis.ping() # type: ignore
+        logger.success("Успешно подключился к Redis")
+
+    except ConnectionFailure as e:
+        logger.critical(f"Не удалось соединиться с MongoDB: {e}")
+        raise RuntimeError("База лежит!!!")
+
+    except ConnectionError as e:
+        logger.critical(f"Не удалось соединиться с Redis: {e}")
+        raise RuntimeError("Редис лежит!!!")
+
     else:
         await create_beanie()
         logger.success("Beanie initialized")
-
-        await test_mongo()
-        await test_redis()
 
 
 async def shutdown():
     """Выполняется при остановке приложения"""
     logger.debug("Закрываем соединеие с базой данных...")
     await mongo.close()
-    logger.debug("Приложение остановлено")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Жизненный цикл приложения"""
-    await startup()
-    yield
-    await shutdown()
+    try:
+        await startup()
+        yield
+    finally:
+        # Сработает и при штатном выходе, и если startup упал на полпути
+        await shutdown()
 
 
 app = FastAPI(
@@ -65,5 +76,5 @@ async def health_check():
     except Exception as e:
         raise HTTPException(
             status_code=503, 
-            detail=f"Database unavailable: {str(e)}"
+            detail=f"База данных недоступна: {str(e)}"
         )
