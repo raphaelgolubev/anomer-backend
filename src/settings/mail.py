@@ -16,7 +16,7 @@ class MailSettings(BaseSettings):
     """ Имя хоста почтового сервера """
 
     password: str | None = None
-    """ Пароль пользователя """
+    """ Пароль приложения см (https://support.google.com/mail/answer/185833?hl=en) """
 
     sender: str | None = None
     """ Отправитель. Например, `ivan.ivanov@gmail.com` """
