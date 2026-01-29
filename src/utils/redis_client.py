@@ -21,5 +21,24 @@ class RedisClient:
 
         self.redis = redis.Redis(**redis_kwargs)
 
+    async def set_verification_code(self, email: str, code: str) -> bool:
+        """
+        Сохраняет код верификации для email с TTL
+
+        Args:
+            email: Email пользователя
+            code: 6-значный код верификации
+
+        Returns:
+            bool: True если код успешно сохранен
+        """
+        try:
+            key = f"verification_code:{email}"
+            await self.redis.setex(key, settings.redis.verification_code_ttl, code)
+            return True
+        except Exception as e:
+            print(f"Redis error: {e}")
+            return False
+
 
 redis_client = RedisClient()
