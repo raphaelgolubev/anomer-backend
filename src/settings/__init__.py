@@ -15,31 +15,4 @@ class Settings:
     redis = RedisSettings()
 
 
-def test():
-    app = settings.app.model_dump_json(indent=4)
-    db = settings.db.model_dump_json(indent=4)
-    mail = settings.mail.model_dump_json(indent=4)
-    security = settings.security.model_dump_json(indent=4)
-    redis = settings.redis.model_dump_json(indent=4)
-    server = settings.server.model_dump_json(indent=4)
-    
-    print("=== App")
-    print(app)
-
-    print("=== Database")
-    print(db)
-
-    print("=== Mail")
-    print(mail)
-
-    print("=== Security")
-    print(security)
-
-    print("=== Redis")
-    print(redis)
-
-    print("=== Server")
-    print(server)
-
-
 settings = Settings()

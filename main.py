@@ -1,10 +1,11 @@
 import uvicorn
 
-from src.settings import settings, test
+from src.settings import settings
+from src.utils.test_funcs import test_settings
 
 
 def main():
-    test()
+    test_settings()
 
     uvicorn.run(
         app="src.app:app",

@@ -4,15 +4,14 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import ORJSONResponse
 
 from pymongo.errors import ConnectionFailure
-from beanie.operators import In
 
 from loguru import logger
 
 from src.settings import settings
 from src.database import mongo, database, create_beanie
 from src.logger import setup_logging
-
 from src.api import main_router
+from src.utils.test_funcs import test_mongo, test_redis
 
 async def startup():
     """Выполняется при запуске приложения"""
@@ -22,41 +21,15 @@ async def startup():
     try:
         # Пытаемся пингануть базу при старте
         await database.command('ping')
-        logger.success("✅ Successfully connected to MongoDB")
+        logger.success("Successfully connected to MongoDB")
     except ConnectionFailure:
-        logger.exception("❌ MongoDB connection failed during startup")
+        logger.exception("MongoDB connection failed during startup")
     else:
         await create_beanie()
-        logger.success("✅ Beanie initialized")
+        logger.success("Beanie initialized")
 
-        async def test_db():
-            from src.database.models import User
-
-            users: list[User] = []
-            for i in range(3):
-                name = f"test_user_{i+1}"
-                usr = User(
-                    name=name,
-                    email=f"test_{i+1}@test.com",
-                    password="<hash>"
-                )
-                users.append(usr)
-                logger.debug(f"added user {name}")
-            
-            result = await User.insert_many(users)
-
-            logger.success(f"Документы добавлены базу данных {database.name}")
-            logger.debug("Идентификаторы документов: ")
-            for id in result.inserted_ids:
-                logger.debug(f"\tDocument {id}")
-
-            deleted = await User.find({"_id": {"$in": result.inserted_ids}}).delete()
-            if deleted:
-                logger.success(f"Все созданные документы удалены: {deleted.deleted_count} записей")
-            else:
-                logger.error(f"Не удалось удалить документы")
-            
-        await test_db()
+        await test_mongo()
+        await test_redis()
 
 
 async def shutdown():

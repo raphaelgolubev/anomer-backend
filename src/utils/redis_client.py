@@ -20,3 +20,6 @@ class RedisClient:
             redis_kwargs["password"] = settings.redis.password
 
         self.redis = redis.Redis(**redis_kwargs)
+
+
+redis_client = RedisClient()
