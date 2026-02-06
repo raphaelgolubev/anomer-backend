@@ -3,7 +3,7 @@ from pydantic import EmailStr, ConfigDict
 
 
 class User(Document):
-    """ Модель пользователя """
+    """ Модель пользователя в БД """
 
     name: Indexed(str, unique=True)
     """ юзернейм """
