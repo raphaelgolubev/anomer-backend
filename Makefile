@@ -90,10 +90,10 @@ build: ## собираем контейнеры
 	$(COMPOSE) build
 
 up: ## поднимаем контейнеры
-	${COMPOSE} up
+	${COMPOSE} up -d
 
 upb: ## пересобираем и поднимаем контейнеры
-	${COMPOSE} up --build
+	${COMPOSE} up --build -d
 
 down: ## останавливаем контейнеры
 	$(COMPOSE) down
