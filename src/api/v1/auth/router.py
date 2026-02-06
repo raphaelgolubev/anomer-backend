@@ -10,7 +10,7 @@ router = APIRouter()
 
 @router.post("/register", response_model=scheme.NewCreatedUser)
 async def register_new_user(user: scheme.CreateUser):
-    """ Регистрация нового пользователя """
+    """ Создание нового пользователя в базе данных """
 
     # хэшируем пароль
     hashed = hash_password(user.password).decode()
