@@ -1,24 +1,19 @@
 from beanie import PydanticObjectId
-from pydantic import ConfigDict, Field, BaseModel, EmailStr
+from pydantic import EmailStr
+
+from src.reusable.base_schema import BaseSchema
 
 
-class BaseSchema(BaseModel):
-    model_config = ConfigDict(
-        # Позволяет мапить данные из объектов Beanie (ORM/ODM mode)
-        from_attributes=True,
-        # Позволяет создавать модель, используя как 'id', так и '_id'
-        populate_by_name=True 
-    )
-
-
-class UserCreate(BaseSchema):
+class CreateUser(BaseSchema):
+    """ Форма для создания юзера """
     name: str
     email: EmailStr
     password: str
 
 
-class CreatedUser(BaseSchema):
-    id: PydanticObjectId = Field(alias = "_id")
+class NewCreatedUser(BaseSchema):
+    """ Форма ответа от сервера """
+    id: PydanticObjectId
     name: str
     email: EmailStr
 
