@@ -3,7 +3,7 @@ import secrets
 from src.utils.redis_client import redis_client
 
 
-def generate_verification_code():
+def generate_otp_code():
     """Генерирует 6-значный код для верификации"""
     return "".join([str(secrets.randbelow(10)) for _ in range(6)])
 
@@ -14,9 +14,9 @@ async def save_otp_in_redis(email: str, code: str) -> bool:
     return saved
 
 
-async def verify_email_code(email: str, code: str) -> bool:
+async def verify_otp_code(email: str, code: str) -> bool:
     """
-    Проверяет код верификации для email
+    Проверяет код верификации для email, после чего удаляет его
 
     Args:
         email: Email пользователя
@@ -35,7 +35,3 @@ async def verify_email_code(email: str, code: str) -> bool:
         return True
 
     return False
-
-
-async def remove_code(email: str) -> bool:
-    return await redis_client.delete_verification_code(email)

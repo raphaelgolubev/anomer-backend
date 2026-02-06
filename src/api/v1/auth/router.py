@@ -31,7 +31,7 @@ async def register_new_user(user: scheme.CreateUser):
     return inserted_user
 
 
-@router.post("/send_email_code", response_model=scheme.EmailSent)
+@router.post("/send_email_code", response_model=scheme.Message)
 async def send_email_code(input: scheme.SendEmailCode, background_tasks: BackgroundTasks):
     """ Отправляет одноразовый код на электронную почту """
     # ищем пользователя в базе
@@ -50,7 +50,7 @@ async def send_email_code(input: scheme.SendEmailCode, background_tasks: Backgro
         )
 
     # генерируем код
-    code = service.generate_verification_code()
+    code = service.generate_otp_code()
     # сохраняем его в redis
     is_saved = await service.save_otp_in_redis(
         email=input.email,
@@ -65,7 +65,7 @@ async def send_email_code(input: scheme.SendEmailCode, background_tasks: Backgro
             code=code
         )
 
-        return scheme.EmailSent(message="Письмо отправлено")
+        return scheme.Message(message="Письмо отправлено")
     
     raise HTTPException(
         status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -73,7 +73,7 @@ async def send_email_code(input: scheme.SendEmailCode, background_tasks: Backgro
     )
 
 
-@router.post("/verify_email", response_model=scheme.EmailVerified)
+@router.post("/verify_email", response_model=scheme.Message)
 async def verify_email(input: scheme.VerifyEmail):
     user = await User.find_one(User.email == input.email)
 
@@ -83,7 +83,7 @@ async def verify_email(input: scheme.VerifyEmail):
             detail="Пользователь с таким адресом не найден"
         )
 
-    is_correct = await service.verify_email_code(
+    is_correct = await service.verify_otp_code(
         email=input.email, 
         code=input.code
     )
@@ -97,9 +97,7 @@ async def verify_email(input: scheme.VerifyEmail):
     if is_correct:
         await user.update(Set({User.status: UserStatus.active})) 
 
-        await service.remove_code(email=input.email)
-
-        return scheme.EmailVerified(
+        return scheme.Message(
             message="Вы успешно подтвердили адрес электронной почты"
         )
     
@@ -111,7 +109,7 @@ async def verify_email(input: scheme.VerifyEmail):
 
 @router.post("/login", response_model=scheme.TokenInfo)
 async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
-    """ Аутентификация и авторизация пользователя """
+    """ Аутентификация пользователя """
     # ищем пользователя
     user = await User.find_one(
         Or(
@@ -149,7 +147,32 @@ async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
     )
 
 
-@router.post("/reset_password")
-async def reset_password():
-    """ Восстановление пароля """
-    pass
+@router.post("/reset_password", response_model=scheme.Message)
+async def reset_password(input: scheme.ResetPasswordRequest):
+    """ Смена забытого пароля через OTP код """
+
+    # ищем пользователя
+    user = await User.find_one(User.email == data.email)
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Пользователь с таким адресом не найден"
+        )
+
+    # проверяем код в redis
+    is_valid = await service.verify_otp_code(input.email, input.code)
+    
+    if not is_valid:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Неверный или истекший код подтверждения"
+        )
+
+    # хэшируем новый пароль и обновляем пользователя
+    hashed_pwd = hash_password(data.new_password).decode()
+    await user.update({"$set": {User.password: hashed_pwd}})
+
+    return scheme.Message(
+        message="Пароль успешно изменен. Теперь вы можете войти."
+    )

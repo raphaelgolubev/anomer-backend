@@ -1,7 +1,7 @@
 from beanie import PydanticObjectId
 from pydantic import BaseModel, EmailStr
 
-from src.reusable.base_schema import BaseSchema
+from src.reusable.schemas import BaseSchema, Message # type: ignore
 
 
 class CreateUser(BaseSchema):
@@ -22,17 +22,9 @@ class SendEmailCode(BaseSchema):
     email: EmailStr
 
 
-class EmailSent(BaseSchema):
-    message: str
-
-
 class VerifyEmail(BaseSchema):
     email: EmailStr
     code: str
-
-
-class EmailVerified(BaseSchema):
-    message: str
 
 
 class TokenInfo(BaseModel):
@@ -40,4 +32,9 @@ class TokenInfo(BaseModel):
     refresh_token: str | None = None
     token_type: str = "Bearer"
 
+
+class ResetPasswordRequest(BaseSchema):
+    email: EmailStr
+    code: str
+    new_password: str
    
