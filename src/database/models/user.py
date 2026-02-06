@@ -1,14 +1,14 @@
-from beanie import Document
+from beanie import Document, Indexed
 from pydantic import EmailStr, ConfigDict
 
 
 class User(Document):
     """ Модель пользователя """
 
-    name: str
+    name: Indexed(str, unique=True)
     """ юзернейм """
 
-    email: EmailStr
+    email: Indexed(EmailStr, unique=True)
     """ почта """
 
     password: str

@@ -1,4 +1,3 @@
-import os, signal
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
@@ -38,7 +37,7 @@ async def startup():
 
     else:
         await create_beanie()
-        logger.success("Beanie initialized")
+        logger.success("Beanie инициализирован")
 
 
 async def shutdown():
