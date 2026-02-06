@@ -20,3 +20,16 @@ dependencies = [
     "redis>=7.0.1",
     "uvicorn>=0.38.0",
 ]
+
+[tool.pyright]
+# Список папок для анализа
+include = ["src"]
+# Исключение папок
+exclude = ["**/__pycache__", ".venv"]
+# Версия Python для проверки совместимости
+pythonVersion = "3.13"
+# Режим проверки типов: "off", "basic" или "strict"
+typeCheckingMode = "strict"
+# Отключаю правила
+reportInvalidTypeForm = false
+reportUnknownVariableType = false
