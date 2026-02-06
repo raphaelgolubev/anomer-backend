@@ -1,4 +1,5 @@
 from typing import Any
+from loguru import logger
 import redis.asyncio as redis
 
 from src.settings import settings
@@ -37,7 +38,7 @@ class RedisClient:
             await self.redis.setex(key, settings.redis.verification_code_ttl, code)
             return True
         except Exception as e:
-            print(f"Redis error: {e}")
+            logger.exception(f"Redis error: {e}")
             return False
 
     async def get_verification_code(self, email: str) -> str | None:
@@ -55,7 +56,7 @@ class RedisClient:
             code = await self.redis.get(key)
             return code
         except Exception as e:
-            print(f"Redis error: {e}")
+            logger.exception(f"Redis error: {e}")
             return None
 
     async def delete_verification_code(self, email: str) -> bool:
@@ -73,7 +74,7 @@ class RedisClient:
             result = await self.redis.delete(key)
             return result > 0
         except Exception as e:
-            print(f"Redis error: {e}")
+            logger.exception(f"Redis error: {e}")
             return False
 
     async def close(self):

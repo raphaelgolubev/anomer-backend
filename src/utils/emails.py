@@ -6,6 +6,7 @@ import aiosmtplib
 from jinja2 import Environment, FileSystemLoader
 
 from src.settings import settings
+from loguru import logger
 
 
 template_dir = settings.mail.templates_path
@@ -85,8 +86,8 @@ async def send_verification_code(to_email: str, code: str) -> bool:
             use_tls=True,
         ) as client:
             await client.send_message(message)
-            print("email успешно отправлен")
+            logger.success("email успешно отправлен")
             return True
     except Exception as e:
-        print(f"SMTP error: {e}")
+        logger.exception(f"SMTP error: {e}")
         return False

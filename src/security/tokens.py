@@ -4,7 +4,6 @@ from datetime import datetime, timezone
 
 import src.security.hashing_encoding as jwt_utils
 from src.settings import settings
-from src.database.tables import User
 
 TOKEN_SUBJECT_FIELD = "sub"
 TOKEN_ROLE_FIELD = "role"
@@ -17,7 +16,7 @@ class TokenType(Enum):
     REFRESH_TOKEN_TYPE = "refresh"
 
 
-def create_token(user: User, token_type: TokenType) -> str:
+def create_token(username: str, role: str, token_type: TokenType) -> str:
     """
     Создает JWT токен и добавляет в него:
     - sub (subject) - информацию о пользователе
@@ -40,7 +39,8 @@ def create_token(user: User, token_type: TokenType) -> str:
     ```
 
     Args:
-        - `user`: пользователь
+        - `username`: имя пользователя
+        - `role`: роль пользователя
         - `token_type`: тип токена
 
     Returns:
@@ -50,8 +50,8 @@ def create_token(user: User, token_type: TokenType) -> str:
     jti = str(uuid.uuid4())
 
     jwt_payload = {
-        TOKEN_SUBJECT_FIELD: user.email,
-        TOKEN_ROLE_FIELD: user.role,
+        TOKEN_SUBJECT_FIELD: username,
+        TOKEN_ROLE_FIELD: role,
         TOKEN_TYPE_FIELD: token_type.value,
         TOKEN_ID_FIELD: jti,
     }

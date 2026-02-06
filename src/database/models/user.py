@@ -4,7 +4,7 @@ from beanie import Document, Indexed
 from pydantic import EmailStr, ConfigDict
 
 
-class UserStatus(Enum):
+class UserStatus(str, Enum):
     """ Статус пользователя """
 
     created = "CREATED"
@@ -17,7 +17,7 @@ class UserStatus(Enum):
     """ Пользователь забанен """
 
 
-class UserRole(Enum):
+class UserRole(str, Enum):
     """ Роль пользователя """
 
     default = "DEFAULT"

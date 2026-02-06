@@ -1,5 +1,5 @@
 from beanie import PydanticObjectId
-from pydantic import EmailStr
+from pydantic import BaseModel, EmailStr
 
 from src.reusable.base_schema import BaseSchema
 
@@ -16,5 +16,28 @@ class NewCreatedUser(BaseSchema):
     id: PydanticObjectId
     name: str
     email: EmailStr
+
+
+class SendEmailCode(BaseSchema):
+    email: EmailStr
+
+
+class EmailSent(BaseSchema):
+    message: str
+
+
+class VerifyEmail(BaseSchema):
+    email: EmailStr
+    code: str
+
+
+class EmailVerified(BaseSchema):
+    message: str
+
+
+class TokenInfo(BaseModel):
+    access_token: str
+    refresh_token: str | None = None
+    token_type: str = "Bearer"
 
    
