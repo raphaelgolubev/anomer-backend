@@ -1,5 +1,30 @@
+from enum import Enum
+
 from beanie import Document, Indexed
 from pydantic import EmailStr, ConfigDict
+
+
+class UserStatus(Enum):
+    """ Статус пользователя """
+
+    created = "CREATED"
+    """ Создан - он только что создан и требуется подтвердить почту """
+
+    active = "ACTIVE"
+    """ Активен - юзер подтвердил почту. Он может пользоваться приложением """
+
+    banned = "BANNED"
+    """ Пользователь забанен """
+
+
+class UserRole(Enum):
+    """ Роль пользователя """
+
+    default = "DEFAULT"
+    """ Самый обычный юзер """
+
+    super_user = "SUPER_USER"
+    """ Юзер с расширенными возможностями """
 
 
 class User(Document):
@@ -13,6 +38,12 @@ class User(Document):
 
     password: str
     """ хэшированный пароль"""
+
+    status: UserStatus = UserStatus.created
+    """ статус пользователя, по умолчанию 'CREATED' """
+
+    role: UserRole = UserRole.default
+    """ роль пользователя, по умолчанию 'DEFAULT' """
 
     class Settings:
         name = "users"
