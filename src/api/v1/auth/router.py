@@ -43,11 +43,11 @@ async def send_email_code(input: scheme.SendEmailCode, background_tasks: Backgro
             detail="Пользователь с такой почтой не найден"
         )
 
-    if user.status == UserStatus.active:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Вы уже подтвердили адрес электронной почты"
-        )
+    # if user.status == UserStatus.active:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_400_BAD_REQUEST,
+    #         detail="Вы уже подтвердили адрес электронной почты"
+    #     )
 
     # генерируем код
     code = service.generate_otp_code()
