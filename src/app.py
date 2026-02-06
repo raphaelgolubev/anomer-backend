@@ -13,6 +13,8 @@ from src.database import mongo, database, create_beanie
 from src.logger import setup_logging
 from src.api import main_router
 from src.utils.redis_client import redis_client
+from src.exceptions import register_exception_handlers
+
 
 async def startup():
     """Выполняется при запуске приложения"""
@@ -57,6 +59,7 @@ async def lifespan(app: FastAPI):
         await shutdown()
 
 
+# создаем инстанс приложения
 app = FastAPI(
     default_response_class=ORJSONResponse,
     lifespan=lifespan,
@@ -64,7 +67,12 @@ app = FastAPI(
     description="Anomer backend monolith",
 )
 
+# включаем роутеры
 app.include_router(main_router)
+
+# регистрируем обработчики ошибок
+register_exception_handlers(app)
+
 
 @app.get("/health")
 async def health_check():

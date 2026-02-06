@@ -1,5 +1,4 @@
-from fastapi import APIRouter, HTTPException, status
-from pymongo.errors import DuplicateKeyError
+from fastapi import APIRouter
 
 from src.security.hashing_encoding import hash_password
 from src.database.models.user import User
@@ -9,39 +8,21 @@ import src.api.v1.auth.schemas as scheme
 router = APIRouter()
 
 
-@router.post("/register")
-async def register_new_user(user: scheme.UserCreate) -> scheme.CreatedUser:
+@router.post("/register", response_model=scheme.NewCreatedUser)
+async def register_new_user(user: scheme.CreateUser):
     """ Регистрация нового пользователя """
 
+    # хэшируем пароль
     hashed = hash_password(user.password).decode()
-
+    # создаем юзера
     new_user = User(
         name=user.name,
         email=user.email,
         password=hashed
     )
 
-    try:
-        inserted_user = await new_user.insert()
-        return inserted_user
-    except DuplicateKeyError as e:
-        key = list(e.details["keyValue"].keys())[0]
-
-        if key == "name":
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Пользователь с таким именем уже существует"
-            )
-        elif key == "email":
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Пользователь с таким email уже существует"
-            )
-        else:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Дупликат"
-            )
+    inserted_user = await new_user.insert()
+    return inserted_user
 
 
 @router.post("/login")
