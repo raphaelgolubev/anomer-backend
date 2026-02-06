@@ -30,10 +30,10 @@ class UserRole(str, Enum):
 class User(Document):
     """ Модель пользователя в БД """
 
-    name: Indexed(str, unique=True)
+    name: str = Indexed(str, unique=True)
     """ юзернейм """
 
-    email: Indexed(EmailStr, unique=True)
+    email: EmailStr = Indexed(EmailStr, unique=True)
     """ почта """
 
     password: str

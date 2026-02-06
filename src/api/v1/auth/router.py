@@ -152,7 +152,7 @@ async def reset_password(input: scheme.ResetPasswordRequest):
     """ Смена забытого пароля через OTP код """
 
     # ищем пользователя
-    user = await User.find_one(User.email == data.email)
+    user = await User.find_one(User.email == input.email)
 
     if not user:
         raise HTTPException(
@@ -170,7 +170,7 @@ async def reset_password(input: scheme.ResetPasswordRequest):
         )
 
     # хэшируем новый пароль и обновляем пользователя
-    hashed_pwd = hash_password(data.new_password).decode()
+    hashed_pwd = hash_password(input.new_password).decode()
     await user.update({"$set": {User.password: hashed_pwd}})
 
     return scheme.Message(
