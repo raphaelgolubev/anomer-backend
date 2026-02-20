@@ -1,17 +1,29 @@
+from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 
 
+# определяем путь к текущему файлу (src/utils/images.py)
+CURRENT_DIR = Path(__file__).parent 
+
+# src/utils/images.py -> utils -> src -> корень -> assets
+PROJECT_ROOT = CURRENT_DIR.parent.parent
+ASSETS_DIR = PROJECT_ROOT / "assets"
+
+# создаем глобально, чтобы не открывать при каждом вызове функции
+BASE_OTP_IMG = Image.open(ASSETS_DIR / "otp_blank_low.jpg").convert("RGB")
+FONT = ImageFont.truetype(str(ASSETS_DIR / "fonts/AverageMono/AverageMono.ttf"), 32)
+
+
 def generate_otp_image(text: str) -> BytesIO:
-    img = Image.open('assets/otp_blank.png')
+    img = BASE_OTP_IMG.copy()
     draw = ImageDraw.Draw(img)
-    font = ImageFont.truetype("assets/fonts/AverageMono/AverageMono.ttf", 76)
     
     # рисуем текст
-    draw.text((375, 2050), text, fill="black", font=font)
+    draw.text((115, 550), text, fill="black", font=FONT)
     
     img_byte_arr = BytesIO()
-    # Сохраняем в PNG (или JPEG), чтобы передать в письмо
-    img.save(img_byte_arr, format='PNG')
+    # сохраняем в jpeg со сжатием
+    img.save(img_byte_arr, format='JPEG', quality=70, optimize=True)
     img_byte_arr.seek(0)
     return img_byte_arr
