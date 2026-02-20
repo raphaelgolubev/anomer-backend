@@ -13,6 +13,7 @@ dependencies = [
     "jinja2>=3.1.6",
     "loguru>=0.7.3",
     "orjson>=3.11.5",
+    "pillow>=11.3.0",
     "pydantic-settings>=2.11.0",
     "pydantic[email]>=2.12.5",
     "pyjwt[crypto]>=2.10.1",
