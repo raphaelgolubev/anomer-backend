@@ -53,7 +53,9 @@ class User(Document):
             "example": {
                 "name": "Ivan",
                 "email": "ivan@email.com",
-                "password": "<some hash>"
+                "password": "<some hash>",
+                "status": "CREATED",
+                "role": "DEFAULT"
             }
         }
     )

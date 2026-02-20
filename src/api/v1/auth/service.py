@@ -9,6 +9,7 @@ def generate_otp_code():
 
 
 async def save_otp_in_redis(email: str, code: str) -> bool:
+    """ Сохраняет одноразовый код в Redis """
     # Сохраняем в Redis с TTL
     saved = await redis_client.set_verification_code(email, code)
     return saved
