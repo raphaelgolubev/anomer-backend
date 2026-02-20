@@ -1,3 +1,4 @@
+from email.mime.image import MIMEImage
 import os
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -6,6 +7,7 @@ import aiosmtplib
 from jinja2 import Environment, FileSystemLoader
 
 from src.settings import settings
+from utils.images import generate_otp_image
 from loguru import logger
 
 
@@ -56,6 +58,12 @@ def get_logo(css_class_to_add: str | None) -> str:
 
 
 async def send_verification_code(to_email: str, code: str) -> bool:
+    # форматируем код
+    code =  f'[ {code} ]'
+
+    # генерируем картинку
+    image_data = generate_otp_image(code)
+
     # Настройка Jinja2
     html_content = render_html(
         filename="verification.html",
@@ -64,18 +72,29 @@ async def send_verification_code(to_email: str, code: str) -> bool:
         logo_svg=get_logo(css_class_to_add="logo-svg"),
     )
 
-    # Формируем письмо с HTML, plain text и embedded image
+    # формируем письмо с HTML, plain text и embedded image
     message = MIMEMultipart("related")
-    message["From"] = "ANOM INC. SYSTEM MESSAGE"
+    message["From"] = "ANOM INC. ОТДЕЛ КАДРОВ"
     message["To"] = to_email
-    message["Subject"] = f"Ваш код подтверждения {settings.app.name}"
+    message["Subject"] = f"Ваш код подтверждения"
 
-    # Альтернативные части: plain и html
+    # альтернативные части: plain и html
     alt = MIMEMultipart("alternative")
-    text_content = f"Введите этот код в терминал: {code}"
+    text_content = f"ПРОТОКОЛ ИДЕНТИФИКАЦИИ"
     alt.attach(MIMEText(text_content, "plain", "utf-8"))
     alt.attach(MIMEText(html_content, "html", "utf-8"))
     message.attach(alt)
+
+    # создаем MIME-объект изображения
+    msg_image = MIMEImage(image_data.read())
+    image_data.close() # Освобождаем память
+
+    # указываем ID, который мы использовали в HTML (src="cid:otp_image")
+    msg_image.add_header('Content-ID', '<otp_image>')
+    msg_image.add_header('Content-Disposition', 'inline', filename='otp_code.png')
+
+    # добавляем изображение в корень "related", а не в "alternative"
+    message.attach(msg_image)
 
     try:
         async with aiosmtplib.SMTP(

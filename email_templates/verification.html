@@ -4,89 +4,12 @@
     <meta charset="UTF-8">
     <title>Код подтверждения</title>
     <style>
-      body {
-        background: #001401;
-        font-family: 'Courier New', monospace;
-        color: #90fba4;
-      }
-
-      .subcolor {
-        color: #90fba4b0;
-      }
-
-      .container {
-        max-width: 400px;
-        margin: 40px auto;
-        background: #001401;
-        border: 2px solid #90fba4;
-        border-radius: 16px;
-        padding: 32px 24px 24px 24px;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(45,140,240,0.10);
-      }
-      .header-row {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 20px;
-        gap: 9.5px;
-      }
-      .logo {
-        width: 64px;
-        height: 64px;
-        object-fit: contain;
-        display: block;
-      }
-      .app-title {
-        font-size: 2.2em;
-        font-weight: bold;
-        /* color: #2d8cf0; */
-        letter-spacing: 0.04em;
-        text-align: left;
-        line-height: 1.1;
-        background: #90fba4;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        color: transparent;
-      }
-      .code-box {
-        display: inline-block;
-        margin: 0px 0 16px 0;
-        padding: 18px 36px;
-        font-size: 2.2em;
-        font-weight: bold;
-        color: #90fba4;
-		    text-shadow: 0 0 8px rgba(150, 248, 166, 0.8);
-        border-radius: 12px;
-        letter-spacing: 0.2em;
-        
-      }
-      .subtitle {
-        color: #90fba4;
-        font-size: 1.1em;
-        margin-bottom: 0.5em;
-      }
-      .logo-svg {
-        width: 75px;
-        height: 75px;
-        display: block;
-      }
+     
     </style>
   </head>
   <body>
     <div class="container">
-      <div class="header-row">
-        {{ logo_svg|safe }}
-        <span class="app-title">{{ app_name }}</span>
-      </div>
-      <h2 class="subcolor">Ваш код подтверждения</h2>
-      <div class="code-box">{{ code }}</div>
-      <div class="subcolor">
-        Введите этот 6-значный код в терминале для подтверждения
-        адреса электронной почты.
-      </div>
+        <img src="cid:otp_image" alt="Verification Code" style="display: block; max-width: 100%;">
     </div>
   </body>
 </html>
